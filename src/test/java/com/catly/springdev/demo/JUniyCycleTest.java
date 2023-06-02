@@ -1,3 +1,5 @@
+package com.catly.springdev.demo;
+
 import org.junit.jupiter.api.*;
 
 public class JUniyCycleTest {

@@ -1,4 +1,4 @@
-package com.catly.springdev;
+package com.catly.springdev.demo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

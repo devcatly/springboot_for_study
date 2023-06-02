@@ -1,5 +1,7 @@
-package com.catly.springdev;
+package com.catly.springdev.demo;
 
+import com.catly.springdev.demo.Member;
+import com.catly.springdev.demo.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

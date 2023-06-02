@@ -1,4 +1,4 @@
-package com.catly.springdev;
+package com.catly.springdev.demo;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
