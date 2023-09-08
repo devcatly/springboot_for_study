@@ -20,88 +20,96 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class TokenproviderTest {
     @Autowired
-    private Tokenprovider tokenprovider;
+    private Tokenprovider tokenProvider;
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private JwtPropertise jwtPropertise;
+    private JwtPropertise jwtProperties;
 
-    @DisplayName("generateToken(): 유저정보와 만료기간을 전달해 토큰")
+    @DisplayName("generateToken(): 유저 정보와 만료 기간을 전달해 토큰을 만들 수 있다.")
     @Test
-    void generateToken(){
-        //given
+    void generateToken() {
+        // given
         User testUser = userRepository.save(User.builder()
-                .email("user@email.com")
+                .email("user@gmail.com")
                 .password("test")
                 .build());
-        //when
-       String token = tokenprovider.generateToken(testUser, Duration.ofDays(14));
-       //then
+
+        // when
+        String token = tokenProvider.generateToken(testUser, Duration.ofDays(14));
+
+        // then
         Long userId = Jwts.parser()
-                .setSigningKey(jwtPropertise.getSecretKey())
+                .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)
                 .getBody()
-                .get("id",Long.class);
+                .get("id", Long.class);
+
         assertThat(userId).isEqualTo(testUser.getId());
     }
 
-    @DisplayName("validToken(): 토큰만료로 실패")
+    @DisplayName("validToken(): 만료된 토큰인 경우에 유효성 검증에 실패한다.")
     @Test
-    void vaiidToken_invalidToekn() {
-        //given
+    void validToken_invalidToken() {
+        // given
         String token = JwtFactory.builder()
                 .expiration(new Date(new Date().getTime() - Duration.ofDays(7).toMillis()))
                 .build()
-                .createToken(jwtPropertise);
-        //when
-        boolean result = tokenprovider.validToken(token);
-        //then
+                .createToken(jwtProperties);
+
+        // when
+        boolean result = tokenProvider.validToken(token);
+
+        // then
         assertThat(result).isFalse();
     }
 
-    @DisplayName("vaildToken():토큰성공")
+
+    @DisplayName("validToken(): 유효한 토큰인 경우에 유효성 검증에 성공한다.")
     @Test
-    void vaildToken_validToken()
-    {
-        //given
-        String token = JwtFactory.withDefaultValues()
-                .createToken(jwtPropertise);
-        //when
-        boolean result = tokenprovider.validToken(token);
-        //then
+    void validToken_validToken() {
+        // given
+        String token = JwtFactory.withDefaultValues().createToken(jwtProperties);
+
+        // when
+        boolean result = tokenProvider.validToken(token);
+
+        // then
         assertThat(result).isTrue();
     }
 
-    @DisplayName("Authrionticaion")
+
+    @DisplayName("getAuthentication(): 토큰 기반으로 인증정보를 가져올 수 있다.")
     @Test
-    void getAuthentication(){
-        //given
-        String userEmail = "user@gmail.com";
+    void getAuthentication() {
+        // given
+        String userEmail = "user@email.com";
         String token = JwtFactory.builder()
                 .subject(userEmail)
-                .build()
-                .createToken(jwtPropertise);
-        //when
-    Authentication authentication = tokenprovider.getAuthentication(token);
-        //then
+                .build().createToken(jwtProperties);
+
+        // when
+        Authentication authentication = tokenProvider.getAuthentication(token);
+
+        // then
         assertThat(((UserDetails) authentication.getPrincipal()).getUsername()).isEqualTo(userEmail);
     }
 
-    @DisplayName("getUserId()")
+    @DisplayName("getUserId(): 토큰으로 유저 ID를 가져올 수 있다.")
     @Test
-    void getUserId(){
-        //given
+    void getUserId() {
+        // given
         Long userId = 1L;
         String token = JwtFactory.builder()
-                .claims(Map.of("id",userId))
+                .claims(Map.of("id", userId))
                 .build()
-                .createToken(jwtPropertise);
-        //when
-        Long userIdByToken = tokenprovider.getUserId(token);
+                .createToken(jwtProperties);
 
-        //then
+        // when
+        Long userIdByToken = tokenProvider.getUserId(token);
+
+        // then
         assertThat(userIdByToken).isEqualTo(userId);
     }
-
 
 }

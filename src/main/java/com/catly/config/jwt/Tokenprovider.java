@@ -48,7 +48,7 @@ public class Tokenprovider {
     public boolean validToken(String token){
         try {
             Jwts.parser()
-                    .setSigningKey(jwtPropertise.getSecretKey())
+                    .setSigningKey(jwtPropertise.getSecretKey()) //비밀값으로 복호화
                     .parseClaimsJwt(token);
             return true;
         }catch (Exception e){
