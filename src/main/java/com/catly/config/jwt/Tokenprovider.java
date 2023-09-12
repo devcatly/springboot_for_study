@@ -49,7 +49,7 @@ public class Tokenprovider {
         try {
             Jwts.parser()
                     .setSigningKey(jwtPropertise.getSecretKey()) //비밀값으로 복호화
-                    .parseClaimsJwt(token);
+                    .parseClaimsJws(token);
             return true;
         }catch (Exception e){
             return false;
